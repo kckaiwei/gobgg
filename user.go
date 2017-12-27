@@ -11,43 +11,71 @@ import (
 )
 
 type User struct {
-	XMLName 	xml.Name	`xml:"user"`
-	Id 			int			`xml:"id,attr"`
 	Username 	string 		`xml:"name,attr"`
-	FirstName 	firstname	`xml:"firstname"`
-	LastName	lastname	`xml:"lastname"`
-	}
-
-type firstname struct {
-	firstname 			string `xml:"value,attr"`
-}
-
-type lastname struct {
-	lastname 			string `xml:"value,attr"`
-}
-
-type Details struct {
-	FirstName 			string	`xml:"value, attr"`
-	LastName 			string	`xml:"lastname"`
-	AvatarLink 			string	`xml:"avatarlink"`
-	YearRegistered 		string	`xml:"yearregistered"`
-	LastLogin 			string	`xml:"lastlogin"`
-	StateOrProvince 	string	`xml:"stateorprovince"`
-	Country 			string	`xml:"country"`
-	Webaddress 			string	`xml:"webaddress"`
-	Xboxaccount 		string	`xml:"xboxaccount"`
-	Wiiaccount  		string	`xml:"wiiaccount"`
-	Psnaccount 			string	`xml:"psnaccount"`
-	Battlenetaccount 	string	`xml:"battlenetaccount"`
-	Steamaccount 		string	`xml:"steamaccount"`
-	Traderating 		string	`xml:"traderating"`
-	Marketrating 		string	`xml:"marketrating"`
-	Buddies				[]Buddy
+	Id 		int		`xml:"id,attr"`
+	Firstname struct {
+            FirstName string 		`xml:"value,attr"`
+        } `xml:"firstname"`
+	Lastname struct {
+            LastName string 		`xml:"value,attr"`
+        } `xml:"lastname"`
+	Avatarlink struct {
+            AvatarLink string 		`xml:"value,attr"`
+        } `xml:"avatarlink"`
+	Yearregistered struct {
+            YearRegistered string 	`xml:"value,attr"`
+        } `xml:"yearregistered"`
+	Lastlogin struct {
+            LastLogin string 	`xml:"value,attr"`
+        } `xml:"lastlogin"`
+	Stateorprovince struct {
+            StateorProvince string 	`xml:"value,attr"`
+        } `xml:"stateorprovince"`
+	Country struct {
+            Country string 	`xml:"value,attr"`
+        } `xml:"country"`
+	Webaddress struct {
+            WebAddress string 	`xml:"value,attr"`
+        } `xml:"webaddress"`
+	Xboxaccount struct {
+            XboxAccount string 	`xml:"value,attr"`
+        } `xml:"xboxaccount"`
+	Wiiaccount struct {
+            WiiAcount string 	`xml:"value,attr"`
+        } `xml:"wiiaccount"`
+	Psnaccount struct {
+            PsnAccount string 	`xml:"value,attr"`
+        } `xml:"psnaccount"`
+	Steamaccount struct {
+            SteamAccount string `xml:"value,attr"`
+        } `xml:"steamaccount"`
+	Traderating struct {
+            TradeRating string `xml:"value,attr"`
+        } `xml:"traderating"`
+	Marketrating struct {
+            MarketRating string `xml:"value,attr"`
+        } `xml:"marketrating"`
+	Buddies []Buddy		`xml:"buddies>buddy"`
+	Guilds	[]Guild		`xml:"guilds>guild"`
+	Tops	[]Item		`xml:"top>item"`
+	Hots	[]Item		`xml:"hot>item"`
 }
 
 type Buddy struct {
-	ID 					int
-	Name 				string
+	Username	string		`xml:"name,attr"`
+	Id		int		`xml:"id,attr"`
+}
+
+type Guild struct {
+	Guildname	string		`xml:"name,attr"`
+	Id		int		`xml:"id,attr"`
+}
+
+type Item struct {
+	Rank		int		`xml:"rank,attr"`
+	Name		string		`xml:"name,attr"`
+	Type		string		`xml:"type,attr"`
+	Id		int		`xml:"id,attr"`	
 }
 
 func GetUser(username, domain string, page int, buddies, guilds, hot, top bool){
@@ -115,7 +143,6 @@ func GetUser(username, domain string, page int, buddies, guilds, hot, top bool){
 	xml.Unmarshal(data, &user)
 
 	log.Print(user)
-	log.Print(user.Id)
 
 	//log.Print(resp)
 	//log.Print(resp.Body)
