@@ -14,3 +14,18 @@ const (
 	ThreadsSuffix = "thread"
 	UserSuffix = "user"
 )
+
+type Query struct{
+	Username 	string
+	Domain 		string
+	Id 			int
+	Page 		int
+	Buddies 	bool
+	Guilds 		bool
+	Hot 		bool
+	Top 		bool
+	Members		bool
+	Sort 		string
+	Type		string
+}
+

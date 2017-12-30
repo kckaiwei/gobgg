@@ -6,23 +6,12 @@ import (
     "net/http"
     "net/url"
     "strconv"
-    "time"
     "io/ioutil"
 )
 
-type Query struct {
-    username string
-    domain string
-    page int
-    buddies bool
-    guilds bool
-    hot bool
-    top bool
-}
-
 type User struct {
     Username    string      `xml:"name,attr"`
-    Id      int     `xml:"id,attr"`
+    Id          int     `xml:"id,attr"`
     Firstname struct {
             FirstName string        `xml:"value,attr"`
         } `xml:"firstname"`
@@ -73,24 +62,19 @@ type User struct {
 
 type Buddy struct {
     Username    string      `xml:"name,attr"`
-    Id          int     `xml:"id,attr"`
-}
-
-type Guild struct {
-    Guildname   string      `xml:"name,attr"`
-    Id          int     `xml:"id,attr"`
+    Id          int         `xml:"id,attr"`
 }
 
 type Item struct {
-    Rank        int     `xml:"rank,attr"`
+    Rank        int         `xml:"rank,attr"`
     Name        string      `xml:"name,attr"`
     Type        string      `xml:"type,attr"`
-    Id          int     `xml:"id,attr"`
+    Id          int         `xml:"id,attr"`
 }
 
 // Gets user information via GET, from query struct, and fills in default values
 // Returns struct of user information from XML
-func GetUser(q Query){
+func GetUser(q Query)(u User){
 
     user := User{}
 
@@ -100,38 +84,42 @@ func GetUser(q Query){
         log.Print("Error parsing url")
     }
 
-    if q.user == "" {
-        return nil
+    if q.Username == "" {
+        return User{}
     }
     // Set defaults
-    if q.domain != "" {
-        q.domain = "boardgame"
+    if q.Domain != "" {
+        q.Domain = "boardgame"
     }
-    if q.page <= 0 {
-        q.page = 1
+    if q.Page <= 0 {
+        q.Page = 1
     }
-    if q.buddies {
-        q.bd = "1"
+    bd := "0"
+    if q.Buddies {
+        bd = "1"
     }
-    if q.guilds {
-        q.gd = "1"
+    gd := "0"
+    if q.Guilds {
+        gd = "1"
     }
-    if q.hot {
-        q.ht = "1"
+    ht := "0"
+    if q.Hot {
+        ht = "1"
     }
-    if q.top {
-        q.tp = "1"
+    tp := "0"
+    if q.Top {
+        tp = "1"
     }
 
     Url.Path += UserSuffix
     parameters := url.Values{}
-    parameters.Add("name", q.username)
-    parameters.Add("buddies", q.bd)
-    parameters.Add("guilds", q.gd)
-    parameters.Add("hot", q.ht)
-    parameters.Add("top", q.tp)
-    parameters.Add("domain", q.domain)
-    parameters.Add("page", strconv.Itoa(q.page))
+    parameters.Add("name", q.Username)
+    parameters.Add("buddies", bd)
+    parameters.Add("guilds", gd)
+    parameters.Add("hot", ht)
+    parameters.Add("top", tp)
+    parameters.Add("domain", q.Domain)
+    parameters.Add("page", strconv.Itoa(q.Page))
     Url.RawQuery = parameters.Encode()
 
     log.Print(Url.String())
@@ -145,14 +133,13 @@ func GetUser(q Query){
 
     if resp.StatusCode != http.StatusOK{
         log.Printf("Status error: %v", resp.StatusCode)
-        return
+        return User{}
     }
 
     data, err := ioutil.ReadAll(resp.Body)
     if err != nil {
         log.Printf("Read body: %v", err)
     }
-    log.Print(string(data))
     xml.Unmarshal(data, &user)
 
     return user
