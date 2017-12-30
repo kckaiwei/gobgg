@@ -17,4 +17,8 @@ func main () {
 	// Get Family Example
 	f := gobgg.Query{Id: 2}
 	fmt.Println(gobgg.GetFamily(f))
+
+	// Get ForumList Example
+	fl := gobgg.Query{Id: 174430, Type: "thing"}
+	fmt.Println(gobgg.GetForumlist(fl))
 }

@@ -53,7 +53,6 @@ func GetFamily(q Query)(f Family){
 	Url.RawQuery = parameters.Encode()
 
 	log.Print(Url.String())
-	// str name, bool buddies, guilds, hot, top, str domain, page
 	resp, err := http.Get(Url.String())
 	if err != nil{
 		log.Print(err)
