@@ -34,6 +34,7 @@ type Member struct {
 
 // Gets guild information via GET, from query struct, and fills in default values
 // Returns struct of guild information from XML
+// Uses the following parameters: id=NNN, members=1, sort=SORTTYPE(username,data), page=NNN
 func GetGuild(q Query)(g Guild){
 
 	guild := Guild{}

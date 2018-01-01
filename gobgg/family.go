@@ -32,6 +32,7 @@ type FMember struct {
 
 // Gets Family information via GET, from query struct, and fills in default values
 // Returns struct of family information from XML
+// Uses the following parameters: id=NNN, type=FAMILYTYPE(rpg,rpgperiodical,boardgamefamily)
 func GetFamily(q Query)(f Family){
 
 	family := Family{}

@@ -74,6 +74,8 @@ type Item struct {
 
 // Gets user information via GET, from query struct, and fills in default values
 // Returns struct of user information from XML
+// Uses the following parameters: name=NAME, buddies=1, guild=1, hot=1, top=1, domain=DOMAIN(boardgame,rpg,videogame),
+// page=NNN
 func GetUser(q Query)(u User){
 
     user := User{}

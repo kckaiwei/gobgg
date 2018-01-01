@@ -28,6 +28,7 @@ type sforum struct {
 
 // Gets Forumlist information via GET, from query struct, and fills in default values
 // Returns struct of forumlist information from XML
+// Uses the following parameters: id=NNN, type=[thing,family]
 func GetForumlist(q Query)(f ForumList){
 
 	fl := ForumList{}
