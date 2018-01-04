@@ -1,4 +1,6 @@
-# gobgg
+# gobgg 
+
+[![GoDoc](https://godoc.org/github.com/kckaiwei/gobgg/gobgg?status.svg)](https://godoc.org/github.com/kckaiwei/gobgg/gobgg)
 
 Board game geek API in Go lang, support for XML API 2.
 
@@ -33,6 +35,65 @@ We create the query.
 Followed by a calling the function GetUser, and passing the query.
 
 `fmt.Println(gobgg.GetUser(u))`
+
+Full example:
+
+```golang
+package main
+
+import (
+	"fmt"
+	"gobgg/gobgg"
+)
+
+func main () {
+	// Get User Example
+	u := gobgg.Query{Username: "whitesymphonia", Guilds: true}
+	user, err := gobgg.GetUser(u)
+	if err != nil{
+		fmt.Println(err)
+	} else {
+		fmt.Println(user)
+	}
+
+	// Get User Example with Error
+	us := gobgg.Query{Username: "", Guilds: true}
+	username, err := gobgg.GetUser(us)
+	if err != nil{
+		fmt.Println(err)
+	} else {
+		fmt.Println(username)
+	}
+
+	// Get Guild Example
+	g := gobgg.Query{Id: 1290, Members: true}
+	guild, err := gobgg.GetGuild(g)
+	if err != nil{
+		fmt.Println(err)
+	} else {
+		fmt.Println(guild)
+	}
+
+	// Get Family Example
+	f := gobgg.Query{Id: 2}
+	family, err := gobgg.GetFamily(f)
+	if err != nil{
+		fmt.Println(err)
+	} else {
+		fmt.Println(family)
+	}
+
+	// Get ForumList Example
+	fl := gobgg.Query{Id: 174430, Type: "thing"}
+	forumlist, err := gobgg.GetForumlist(fl)
+	if err != nil{
+		fmt.Println(err)
+	} else {
+		fmt.Println(forumlist)
+	}
+}
+
+```
 
 ## TODO
 

@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"io/ioutil"
 	"strings"
+	"errors"
 )
 
 type ForumList struct {
@@ -29,7 +30,7 @@ type sforum struct {
 // Gets Forumlist information via GET, from query struct, and fills in default values
 // Returns struct of forumlist information from XML
 // Uses the following parameters: id=NNN, type=[thing,family]
-func GetForumlist(q Query)(f ForumList){
+func GetForumlist(q Query)(f ForumList, e error){
 
 	fl := ForumList{}
 
@@ -37,19 +38,20 @@ func GetForumlist(q Query)(f ForumList){
 	Url, err := url.Parse(BaseURL)
 	if err != nil {
 		log.Print("Error parsing url")
+		return ForumList{}, errors.New("BaseURLInvalid")
 	}
 	// Not enough data to work with
 	if q.Id <= 0 {
-		return ForumList{}
+		return ForumList{}, errors.New("NoIDGiven")
 	}
 
 	// Must have type to work
 	if q.Type == "" {
-		return ForumList{}
+		return ForumList{}, errors.New("NoTypeGiven")
 	}
 
 	if strings.ToLower(q.Type) != "thing" && strings.ToLower(q.Type) != "family"{
-		return ForumList{}
+		return ForumList{}, errors.New("InvalidTypeGiven")
 	}
 
 	Url.Path += ForumListSuffix
@@ -62,21 +64,23 @@ func GetForumlist(q Query)(f ForumList){
 	resp, err := http.Get(Url.String())
 	if err != nil{
 		log.Print(err)
+		return ForumList{}, errors.New("GetRequestFailed")
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK{
 		log.Printf("Status error: %v", resp.StatusCode)
-		return
+		return ForumList{}, &StatusError{"StatusError", resp.StatusCode}
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Printf("Read body: %v", err)
+		return ForumList{}, errors.New("ResponseReadError")
 	}
 	xml.Unmarshal(data, &fl)
 
-	return fl
+	return fl, nil
 }
 

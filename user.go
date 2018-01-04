@@ -2,6 +2,7 @@ package gobgg
 
 import (
     "encoding/xml"
+    "errors"
     "log"
     "net/http"
     "net/url"
@@ -54,18 +55,18 @@ type User struct {
     Marketrating struct {
             MarketRating string `xml:"value,attr"`
         } `xml:"marketrating"`
-    Buddies []Buddy     `xml:"buddies>buddy"`
+    Buddies []buddy     `xml:"buddies>buddy"`
     Guilds  []Guild     `xml:"guilds>guild"`
-    Tops    []Item      `xml:"top>item"`
-    Hots    []Item      `xml:"hot>item"`
+    Tops    []item      `xml:"top>item"`
+    Hots    []item      `xml:"hot>item"`
 }
 
-type Buddy struct {
+type buddy struct {
     Username    string      `xml:"name,attr"`
     Id          int         `xml:"id,attr"`
 }
 
-type Item struct {
+type item struct {
     Rank        int         `xml:"rank,attr"`
     Name        string      `xml:"name,attr"`
     Type        string      `xml:"type,attr"`
@@ -76,7 +77,7 @@ type Item struct {
 // Returns struct of user information from XML
 // Uses the following parameters: name=NAME, buddies=1, guild=1, hot=1, top=1, domain=DOMAIN(boardgame,rpg,videogame),
 // page=NNN
-func GetUser(q Query)(u User){
+func GetUser(q Query)(u User, e error){
 
     user := User{}
 
@@ -84,10 +85,11 @@ func GetUser(q Query)(u User){
     Url, err := url.Parse(BaseURL)
     if err != nil {
         log.Print("Error parsing url")
+        return User{}, errors.New("BaseURLInvalid")
     }
 
     if q.Username == "" {
-        return User{}
+        return User{}, errors.New("NoUsernameGiven")
     }
     // Set defaults
     if q.Domain != "" {
@@ -129,20 +131,22 @@ func GetUser(q Query)(u User){
     resp, err := http.Get(Url.String())
     if err != nil{
         log.Print(err)
+        return User{}, errors.New("GetRequestFailed")
     }
 
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK{
         log.Printf("Status error: %v", resp.StatusCode)
-        return User{}
+        return User{}, &StatusError{"StatusError", resp.StatusCode}
     }
 
     data, err := ioutil.ReadAll(resp.Body)
     if err != nil {
         log.Printf("Read body: %v", err)
+        return User{}, errors.New("ResponseReadError")
     }
     xml.Unmarshal(data, &user)
 
-    return user
+    return user, nil
 }

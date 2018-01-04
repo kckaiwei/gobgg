@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"io/ioutil"
 	"strings"
+	"errors"
 )
 
 type Guild struct {
@@ -35,7 +36,7 @@ type Member struct {
 // Gets guild information via GET, from query struct, and fills in default values
 // Returns struct of guild information from XML
 // Uses the following parameters: id=NNN, members=1, sort=SORTTYPE(username,data), page=NNN
-func GetGuild(q Query)(g Guild){
+func GetGuild(q Query)(g Guild, e error){
 
 	guild := Guild{}
 
@@ -43,10 +44,11 @@ func GetGuild(q Query)(g Guild){
 	Url, err := url.Parse(BaseURL)
 	if err != nil {
 		log.Print("Error parsing url")
+		return Guild{}, errors.New("BaseURLInvalid")
 	}
 	// Not enough data to work with
 	if q.Id <= 0 {
-		return Guild{}
+		return Guild{}, errors.New("NoIDGiven")
 	}
 	if q.Page <= 0 {
 		q.Page = 1
@@ -73,21 +75,23 @@ func GetGuild(q Query)(g Guild){
 	resp, err := http.Get(Url.String())
 	if err != nil{
 		log.Print(err)
+		return Guild{}, errors.New("GetRequestFailed")
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK{
 		log.Printf("Status error: %v", resp.StatusCode)
-		return
+		return Guild{}, &StatusError{"StatusError", resp.StatusCode}
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Printf("Read body: %v", err)
+		return Guild{}, errors.New("ResponseReadError")
 	}
 	xml.Unmarshal(data, &guild)
 
-	return guild
+	return guild, nil
 }
 

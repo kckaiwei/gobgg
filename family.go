@@ -7,23 +7,24 @@ import (
 	"net/url"
 	"strconv"
 	"io/ioutil"
+	"errors"
 )
 
 type Family struct {
-	FName 		Name 		`xml:"item>name"`
+	FName 		name 		`xml:"item>name"`
 	Thumbnail	string		`xml:"item>thumbnail"`
 	Image 		string		`xml:"item>image"`
 	Description	string		`xml:"item>description"`
-	Members 	[]FMember	`xml:"item>link"`
+	Members 	[]fMember	`xml:"item>link"`
 }
 
-type Name struct {
+type name struct {
 	Name			string		`xml:"value,attr"`
 	SortIndex		int			`xml:"sortindex,attr"`
 	Type			string		`xml:"type,attr"`
 }
 
-type FMember struct {
+type fMember struct {
 	Name			string		`xml:"value,attr"`
 	Type 			string		`xml:"type,attr"`
 	Id 				int			`xml:"id,attr"`
@@ -33,7 +34,7 @@ type FMember struct {
 // Gets Family information via GET, from query struct, and fills in default values
 // Returns struct of family information from XML
 // Uses the following parameters: id=NNN, type=FAMILYTYPE(rpg,rpgperiodical,boardgamefamily)
-func GetFamily(q Query)(f Family){
+func GetFamily(q Query)(f Family, e error){
 
 	family := Family{}
 
@@ -41,10 +42,11 @@ func GetFamily(q Query)(f Family){
 	Url, err := url.Parse(BaseURL)
 	if err != nil {
 		log.Print("Error parsing url")
+		return Family{}, errors.New("BaseURLInvalid")
 	}
 	// Not enough data to work with
 	if q.Id <= 0 {
-		return Family{}
+		return Family{}, errors.New("NoID")
 	}
 
 	Url.Path += FamilySuffix
@@ -57,21 +59,23 @@ func GetFamily(q Query)(f Family){
 	resp, err := http.Get(Url.String())
 	if err != nil{
 		log.Print(err)
+		return Family{}, errors.New("GetRequestFailed")
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK{
 		log.Printf("Status error: %v", resp.StatusCode)
-		return
+		return Family{}, &StatusError{"StatusError", resp.StatusCode}
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Printf("Read body: %v", err)
+		return Family{}, errors.New("ResponseReadError")
 	}
 	xml.Unmarshal(data, &family)
 
-	return family
+	return family, nil
 }
 
