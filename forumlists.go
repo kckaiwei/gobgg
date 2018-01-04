@@ -11,11 +11,13 @@ import (
 	"errors"
 )
 
+// Forum list type that hold data from XML response
 type ForumList struct {
 	Type 		string		`xml:"type,attr"`
 	Subforum	[]sforum	`xml:"forum"`
 }
 
+// Type for subforum data within forum list
 type sforum struct {
 	Title        string `xml:"title,attr"`
 	Groupid      int    `xml:"groupid,attr"`

@@ -10,6 +10,7 @@ import (
     "io/ioutil"
 )
 
+// User information data from XML response
 type User struct {
     Username    string      `xml:"name,attr"`
     Id          int     `xml:"id,attr"`
@@ -61,11 +62,13 @@ type User struct {
     Hots    []item      `xml:"hot>item"`
 }
 
+// Type holding User's buddy information
 type buddy struct {
     Username    string      `xml:"name,attr"`
     Id          int         `xml:"id,attr"`
 }
 
+// Type holding item information for top and hot lists
 type item struct {
     Rank        int         `xml:"rank,attr"`
     Name        string      `xml:"name,attr"`

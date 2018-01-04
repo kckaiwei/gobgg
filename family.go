@@ -10,6 +10,7 @@ import (
 	"errors"
 )
 
+// Struct holding data from XML response
 type Family struct {
 	FName 		name 		`xml:"item>name"`
 	Thumbnail	string		`xml:"item>thumbnail"`
@@ -18,12 +19,14 @@ type Family struct {
 	Members 	[]fMember	`xml:"item>link"`
 }
 
+// Type holding name information for Family struct
 type name struct {
 	Name			string		`xml:"value,attr"`
 	SortIndex		int			`xml:"sortindex,attr"`
 	Type			string		`xml:"type,attr"`
 }
 
+// Type holding family member data
 type fMember struct {
 	Name			string		`xml:"value,attr"`
 	Type 			string		`xml:"type,attr"`

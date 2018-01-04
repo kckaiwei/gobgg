@@ -11,6 +11,7 @@ import (
 	"errors"
 )
 
+// Guild information from XML response
 type Guild struct {
 	Name 		string 		`xml:"name,attr"`
 	Id 			int			`xml:"id,attr"`
@@ -28,8 +29,9 @@ type Guild struct {
 	Members 	[]Member	`xml:"members>member"`
 }
 
+// Type for each member in guild
 type Member struct {
-	Name		string		`xml:"name,attr"`
+	Name			string		`xml:"name,attr"`
 	Joindate		string		`xml:"date,attr"`
 }
 
