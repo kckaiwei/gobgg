@@ -43,7 +43,7 @@ package main
 
 import (
 	"fmt"
-	"gobgg/gobgg"
+	"gobgg"
 )
 
 func main () {
