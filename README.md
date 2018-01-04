@@ -1,6 +1,6 @@
 # gobgg 
 
-[![GoDoc](https://godoc.org/github.com/kckaiwei/gobgg/gobgg?status.svg)](https://godoc.org/github.com/kckaiwei/gobgg/gobgg)
+[![GoDoc](https://godoc.org/github.com/kckaiwei/gobgg?status.svg)](https://godoc.org/github.com/kckaiwei/gobgg)
 
 Board game geek API in Go lang, support for XML API 2.
 
